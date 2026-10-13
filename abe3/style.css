@@ -1,0 +1,10 @@
+body {
+	background-color: black;
+}
+
+.canvas-container {
+	display: flex;
+	justify-content: center; /* Centers horizontally */
+	align-items: center;     /* Centers vertically */
+	height: 100vh;           /* Takes up full viewport height */
+}
