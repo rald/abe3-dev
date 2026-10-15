@@ -4,12 +4,9 @@ var ctx=canvas.getContext("2d");
 canvas.width=256;
 canvas.height=256+128;
 
-ctx.fillStyle=palette[0];
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-ctx.strokeStyle=palette[12];
-ctx.strokeRect(0,0,canvas.width,canvas.height);
-ctx.strokeRect(0,0,canvas.width,256);
+function inrect(x,y,rx,ry,rw,rh) {
+	return x>=rx && x<rx+rw && y>=ry && y<ry+rh;
+}
 
 function drawCanvas(ctx,cvs,x,y,s,f) {
 	var hex="0123456789ABCDEF";
@@ -56,6 +53,112 @@ if(player)drawCanvas(ctx,spr,x+i*16,y+j*16,1,5+lvl.dir);
 		}
 	}
 } 
+
+var pointer={
+	x:0,
+	y:0,
+	isDown:false
+};
+
+class PointerHandler {
+	constructor(element) {
+		this.element = element;
+		this.isDragging = false;
+
+		// Bind methods to preserve 'this' context
+		this.onPointerDown = this.onPointerDown.bind(this);
+		this.onPointerMove = this.onPointerMove.bind(this);
+		this.onPointerUp = this.onPointerUp.bind(this);
+
+		// Attach listeners
+		this.element.addEventListener('pointerdown', this.onPointerDown);
+		window.addEventListener('pointermove', this.onPointerMove);
+		window.addEventListener('pointerup', this.onPointerUp);
+		window.addEventListener('pointercancel', this.onPointerUp);
+
+		// Prevent default touch behaviors like scrolling/zooming on the element
+		this.element.style.touchAction = 'none';
+	}
+
+	onPointerDown(event) {
+		this.isDragging = true;
+
+		// Capture pointer so we keep receiving events even if the cursor leaves the element
+		this.element.setPointerCapture(event.pointerId);
+
+		const coords = this.getCoordinates(event);
+
+		// TODO: Add your start/down logic here (e.g., store starting position)
+
+		pointer.x=coords.x;
+		pointer.y=coords.y;
+		pointer.isDown=true;
+	}
+
+	onPointerMove(event) {
+		if (!this.isDragging) return;
+
+		const coords = this.getCoordinates(event);
+
+		// TODO: Add your move/drag logic here (e.g., update element position)
+		pointer.x=coords.x;
+		pointer.y=coords.y;
+	}
+
+	onPointerUp(event) {
+		if (!this.isDragging) return;
+
+		this.isDragging = false;
+
+		try {
+			this.element.releasePointerCapture(event.pointerId);
+		} catch (e) {
+		// Ignore if pointer capture was already lost
+		}
+
+		const coords = this.getCoordinates(event);
+
+		// TODO: Add your end/release logic here
+		pointer.x=coords.x;
+		pointer.y=coords.y;
+		pointer.isDown=false;
+	}
+
+	getCoordinates(event) {
+		// Returns coordinates relative to the target element
+		const rect = this.element.getBoundingClientRect();
+		return {
+			x: event.clientX - rect.left,
+			y: event.clientY - rect.top,
+			clientX: event.clientX,
+			clientY: event.clientY
+		};
+	}
+
+	// Clean up event listeners if needed
+	destroy() {
+		this.element.removeEventListener('pointerdown', this.onPointerDown);
+		window.removeEventListener('pointermove', this.onPointerMove);
+		window.removeEventListener('pointerup', this.onPointerUp);
+		window.removeEventListener('pointercancel', this.onPointerUp);
+	}
+}
+
+function clrscr(ctx) {
+	ctx.fillStyle=palette[0];
+	ctx.fillRect(0,0,canvas.width,canvas.height);
+}
+
+// Disables right-click context menu on the entire website
+window.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+});
+
+clrscr(ctx);
+
+ctx.strokeStyle=palette[12];
+ctx.strokeRect(0,0,canvas.width,canvas.height);
+ctx.strokeRect(0,0,canvas.width,256);
 
 var level={...levels[0]};
 
