@@ -38,6 +38,22 @@ function drawPad(ctx,pad) {
 */
 }
 
+function drawText(ctx,fnt,txt,x,y,s) {
+	var chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789[].:'";
+	var a=x,b=y;
+	for(var k=0;k<txt.length;k++) {
+		var l=chars.indexOf(txt[k]);
+		if(l!=-1) {
+			drawCanvas(ctx,fnt,a,b,s,l);
+			a+=(fnt.w+1)*s;
+			if(a+(fnt.w+1)*s>=canvas.width) {
+				a=0;
+				b+=(fnt.h+1)*s;
+			}
+		}
+	}
+}
+
 function drawLevel(ctx,lvl,spr,x,y,s) {
 	var hex="0123456789ABCDEF";
 	for(var j=0;j<lvl.h;j++) {
@@ -171,3 +187,5 @@ var level={...levels[0]};
 drawLevel(ctx,level,sprites,0,0,1);
 
 drawPad(ctx,pad);
+
+drawText(ctx,font,"ABE'S STAR COLLECTOR",(canvas.width-20*12)/2,canvas.height-14,2);
