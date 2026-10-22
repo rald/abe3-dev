@@ -3,6 +3,7 @@ var ctx=canvas.getContext("2d");
 
 canvas.width=256;
 canvas.height=256+128;
+canvas.style.border = "1px solid white";
 
 function inrect(x,y,rx,ry,rw,rh) {
 	return x>=rx && x<rx+rw && y>=ry && y<ry+rh;
@@ -46,13 +47,19 @@ function drawLevel(ctx,lvl,spr,x,y,s) {
         var color=c & 3;
         var star=c & 4;
         var player=c & 8;
-drawCanvas(ctx,spr,x+i*16,y+j*16,1,color);
-if(star)drawCanvas(ctx,spr,x+i*16,y+j*16,1,4);
-if(player)drawCanvas(ctx,spr,x+i*16,y+j*16,1,5+lvl.dir);
+
+		drawCanvas(ctx,spr,x+i*16,y+j*16,1,color);
+		if(star)drawCanvas(ctx,spr,x+i*16,y+j*16,1,4);
+		if(player)drawCanvas(ctx,spr,x+i*16,y+j*16,1,5+lvl.dir);
+
 			}
 		}
 	}
-} 
+
+	ctx.strokeStyle="#FFFFFF";
+	ctx.strokeRect(0.5,0.5,256,256);
+
+}
 
 var pointer={
 	x:0,
