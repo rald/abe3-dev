@@ -48,6 +48,10 @@ function drawPad(ctx,pad) {
 	drawCanvas(ctx,pad,192,256,2,6);
 	drawCanvas(ctx,pad,192,320,2,7);
 */
+
+	drawBorder(ctx);
+
+	drawText(ctx,font,"ABE'S STAR WORLD",(canvas.width-16*12)/2,canvas.height-14,2);
 }
 
 function drawText(ctx,fnt,txt,x,y,s) {
@@ -228,9 +232,6 @@ for(var j=0;j<10;j++) {
 
 */
 
-
-
 drawPad(ctx,pad);
-drawBorder(ctx);
 
-drawText(ctx,font,"ABE'S STAR WORLD",(canvas.width-16*12)/2,canvas.height-14,2);
+
