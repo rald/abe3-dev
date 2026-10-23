@@ -91,8 +91,12 @@ function drawLevel(ctx,lvl,spr,x,y,s) {
 }
 
 function drawBorder(ctx) {
-	ctx.strokeStyle="#FFFFFF";
+	ctx.strokeStyle=palette[12];
 	ctx.strokeRect(0.5,0.5,256,256);
+
+	ctx.strokeStyle=palette[12];
+	ctx.strokeRect(0,0,canvas.width,canvas.height);
+	ctx.strokeRect(0,0,canvas.width,256);
 }
 
 var pointer={
@@ -254,16 +258,27 @@ function handleDirection(key) {
 	}
 }
 
+// Disables right-click context menu on the entire website
+window.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+});
+
+window.addEventListener('keydown', (event) => {
+    // Check if the pressed key is one of the arrow keys
+
+//		console.log(event.key);
+
+    if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'X','x','Z','z'].includes(event.key)) {
+        event.preventDefault();
+        handleDirection(event.key);
+    }
+});
+
+const handler = new PointerHandler(canvas);
 
 
 
 clrscr(ctx);
-
-ctx.strokeStyle=palette[12];
-ctx.strokeRect(0,0,canvas.width,canvas.height);
-ctx.strokeRect(0,0,canvas.width,256);
-
-
 
 var level={...levels[0]};
 
@@ -291,22 +306,4 @@ for(var j=0;j<10;j++) {
 drawPad(ctx,pad);
 
 
-
-// Disables right-click context menu on the entire website
-window.addEventListener('contextmenu', (event) => {
-  event.preventDefault();
-});
-
-window.addEventListener('keydown', (event) => {
-    // Check if the pressed key is one of the arrow keys
-
-//		console.log(event.key);
-
-    if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'X','x','Z','z'].includes(event.key)) {
-        event.preventDefault();
-        handleDirection(event.key);
-    }
-});
-
-const handler = new PointerHandler(canvas);
 
