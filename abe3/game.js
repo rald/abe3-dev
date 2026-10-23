@@ -83,7 +83,7 @@ function drawLevel(ctx,lvl,spr,x,y,s) {
 
 //	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,5+lvl.f);
 
-	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,27+lvl.f);
+	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,5+lvl.f);
 
 }
 
