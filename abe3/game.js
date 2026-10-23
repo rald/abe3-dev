@@ -85,7 +85,7 @@ function drawLevel(ctx,lvl,spr,x,y,s) {
 		}
 	}
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,5+lvl.f);
-	drawGrid(ctx);
+	drawGrid(ctx,16,16,x,y,16,palette[1]);
 }
 
 function drawBorder(ctx) {
@@ -97,23 +97,49 @@ function drawBorder(ctx) {
 	ctx.strokeRect(0,0,canvas.width,256);
 }
 
-function drawGrid(ctx) {
-	for(var i=1;i<16;i++) {
+function drawGrid(ctx,w,h,x,y,s,c) {
+	for(var i=1;i<w;i++) {
 		ctx.beginPath();
-		ctx.strokeStyle=palette[0];
-		ctx.moveTo(i*16,1);
-		ctx.lineTo(i*16,255);
+		ctx.strokeStyle=c;
+		ctx.moveTo(x+i*s,y);
+		ctx.lineTo(x+i*s,y+h*s);
 		ctx.stroke();
 		ctx.closePath();
 	}
-	for(var i=1;i<16;i++) {
+	for(var i=1;i<h;i++) {
 		ctx.beginPath();
-		ctx.strokeStyle=palette[0];
-		ctx.moveTo(1,i*16);
-		ctx.lineTo(255,i*16);
+		ctx.strokeStyle=c;
+		ctx.moveTo(x,y+i*s);
+		ctx.lineTo(x+w*s,y+i*s);
 		ctx.stroke();
 		ctx.closePath();
 	}
+}
+
+function drawCode(ctx,code,spr,x,y,s) {
+
+	for(var i=0;i<code.w;i++) {
+		drawCanvas(ctx,spr,x+i*16+16,y,s,26);
+		drawCanvas(ctx,spr,x+i*16+16,y,s,13+i);
+	}
+
+	for(var i=0;i<code.h;i++) {
+		drawCanvas(ctx,spr,x,y+i*16+16,s,26);
+		drawCanvas(ctx,spr,x,y+i*16+16,s,13+i);
+	}
+
+	for(var j=0;j<code.h;j++) {
+		for(var i=0;i<code.w;i++) {
+			drawCanvas(ctx,spr,x+i*16+16,y+j*16+16,s,code.d[j][i]);
+		}
+	}
+
+	drawGrid(ctx,code.w+1,code.h+1,x,y,16,palette[1]);
+}
+
+function drawCursor(ctx,code) {
+	ctx.strokeStyle=palette[12];
+	ctx.strokeRect(code.x*16+16,code.y*16+16,16,16);
 }
 
 var pointer={
@@ -302,6 +328,10 @@ function handleDirection(key) {
 				case 'Z':
 				case 'z':
 		        	console.log("X");
+		        	clrscr(ctx);
+		        	drawPad(ctx,pad);
+		        	drawCode(ctx,code,sprites,0,0,1);
+		        	drawCursor(ctx,code);
 		        	gameState=GameState.CODE;
 					break;
 				case 'X':
@@ -328,6 +358,9 @@ function handleDirection(key) {
 				case 'Z':
 				case 'z':
 		        	console.log("X");
+		        	clrscr(ctx);
+		        	drawPad(ctx,pad);
+					drawLevel(ctx,level,sprites,0,0,1);
 		        	gameState=GameState.PLAY;
 					break;
 				case 'X':
@@ -358,7 +391,24 @@ window.addEventListener('keydown', (event) => {
 
 const handler = new PointerHandler(canvas);
 
-
+var code={
+	w: 10,
+	h: 10,
+	x: 0,
+	y: 0,
+	d: [
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+		[0,0,0,0,0,0,0,0,0,0],
+	],
+};
 
 var currentLevel=0;
 var level={...levels[currentLevel]};
@@ -366,5 +416,3 @@ clrscr(ctx);
 drawLevel(ctx,level,sprites,0,0,1);
 drawPad(ctx,pad);
 drawGrid(ctx);
-
-
