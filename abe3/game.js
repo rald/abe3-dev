@@ -84,7 +84,11 @@ function drawLevel(ctx,lvl,spr,x,y,s) {
 //	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,5+lvl.f);
 
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,5+lvl.f);
+}
 
+function drawBorder(ctx) {
+	ctx.strokeStyle="#FFFFFF";
+	ctx.strokeRect(0.5,0.5,256,256);
 }
 
 var pointer={
@@ -224,9 +228,9 @@ for(var j=0;j<10;j++) {
 
 */
 
-drawPad(ctx,pad);
 
-ctx.strokeStyle="#FFFFFF";
-ctx.strokeRect(0.5,0.5,256,256);
+
+drawPad(ctx,pad);
+drawBorder(ctx);
 
 drawText(ctx,font,"ABE'S STAR WORLD",(canvas.width-16*12)/2,canvas.height-14,2);
