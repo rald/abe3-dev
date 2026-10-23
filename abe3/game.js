@@ -84,10 +84,8 @@ function drawLevel(ctx,lvl,spr,x,y,s) {
 			}
 		}
 	}
-
-//	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,5+lvl.f);
-
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,5+lvl.f);
+	drawGrid(ctx);
 }
 
 function drawBorder(ctx) {
@@ -97,6 +95,25 @@ function drawBorder(ctx) {
 	ctx.strokeStyle=palette[12];
 	ctx.strokeRect(0,0,canvas.width,canvas.height);
 	ctx.strokeRect(0,0,canvas.width,256);
+}
+
+function drawGrid(ctx) {
+	for(var i=1;i<16;i++) {
+		ctx.beginPath();
+		ctx.strokeStyle=palette[0];
+		ctx.moveTo(i*16,1);
+		ctx.lineTo(i*16,255);
+		ctx.stroke();
+		ctx.closePath();
+	}
+	for(var i=1;i<16;i++) {
+		ctx.beginPath();
+		ctx.strokeStyle=palette[0];
+		ctx.moveTo(1,i*16);
+		ctx.lineTo(255,i*16);
+		ctx.stroke();
+		ctx.closePath();
+	}
 }
 
 var pointer={
@@ -233,9 +250,23 @@ function handleDirection(key) {
 		    switch (key) {
 		        case 'ArrowLeft':
 		        	console.log("ArrowLeft");
+		        	if(currentLevel>0) {
+		        		currentLevel--;
+		        		level={...levels[currentLevel]};
+		        		clrscr(ctx);
+						drawLevel(ctx,level,sprites,0,0,1);
+		        		drawPad(ctx,pad);
+		        	}
 					break;
 		        case 'ArrowRight':
 		        	console.log("ArrowRight");
+		        	if(currentLevel<levels.length-1) {
+		        		currentLevel++;
+		        		level={...levels[currentLevel]};
+		        		clrscr(ctx);
+						drawLevel(ctx,level,sprites,0,0,1);
+		        		drawPad(ctx,pad);
+		        	}
 					break;
 		        case 'ArrowDown':
 		        	console.log("ArrowDown");
@@ -278,32 +309,11 @@ const handler = new PointerHandler(canvas);
 
 
 
+var currentLevel=0;
+var level={...levels[currentLevel]};
 clrscr(ctx);
-
-var level={...levels[0]};
-
 drawLevel(ctx,level,sprites,0,0,1);
-
-
-
-/*
-for(var i=0;i<10;i++) {
-	drawCanvas(ctx,sprites,i*16+16,0,1,26);
-	drawCanvas(ctx,sprites,i*16+16,0,1,i+13);
-	drawCanvas(ctx,sprites,0,i*16+16,1,26);
-	drawCanvas(ctx,sprites,0,i*16+16,1,i+13);
-}
-
-for(var j=0;j<10;j++) {
-	for(var i=0;i<10;i++) {
-		drawCanvas(ctx,sprites,i*16+16,j*16+16,1,rnd(4));
-		drawCanvas(ctx,sprites,i*16+16,j*16+16,1,rnd(17)+9);
-	}
-}
-
-*/
-
 drawPad(ctx,pad);
-
+drawGrid(ctx);
 
 
