@@ -5,6 +5,14 @@ canvas.width=256;
 canvas.height=256+128;
 canvas.style.border = "1px solid white";
 
+const GameState = {
+	SELECT: "SELECT",
+	PLAY:   "PLAY",
+	CODE:   "CODE",
+};
+
+var gameState=GameState.SELECT;
+
 function inrect(x,y,rx,ry,rw,rh) {
 	return x>=rx && x<rx+rw && y>=ry && y<ry+rh;
 }
@@ -115,6 +123,12 @@ class PointerHandler {
 		pointer.x=coords.x;
 		pointer.y=coords.y;
 		pointer.isDown=true;
+
+		switch(gameState) {
+			case GameState.SELECT: break;
+			case GameState.CODE: break;
+			case GameState.PLAY: break;
+		}
 	}
 
 	onPointerMove(event) {
