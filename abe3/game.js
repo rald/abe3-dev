@@ -277,6 +277,7 @@ function handleDirection(key) {
 				case 'Z':
 				case 'z':
 		        	console.log("X");
+		        	gameState=GameState.PLAY;
 					break;
 				case 'X':
 				case 'x':
@@ -284,8 +285,58 @@ function handleDirection(key) {
 					break;
 			}
 			break;
-		case GameState.PLAY: break;
-		case GameState.CODE: break;
+		case GameState.PLAY:
+			switch(key) {
+		        case 'ArrowLeft':
+		        	console.log("ArrowLeft");
+					break;
+		        case 'ArrowRight':
+		        	console.log("ArrowRight");
+					break;
+		        case 'ArrowDown':
+		        	console.log("ArrowDown");
+					break;
+		        case 'ArrowUp':
+		        	console.log("ArrowUp");
+					break;
+				case 'Z':
+				case 'z':
+		        	console.log("X");
+		        	gameState=GameState.CODE;
+					break;
+				case 'X':
+				case 'x':
+		        	console.log("O");
+					break;
+				default: break;
+			}
+			break;
+		case GameState.CODE:
+			switch(key) {
+		        case 'ArrowLeft':
+		        	console.log("ArrowLeft");
+					break;
+		        case 'ArrowRight':
+		        	console.log("ArrowRight");
+					break;
+		        case 'ArrowDown':
+		        	console.log("ArrowDown");
+					break;
+		        case 'ArrowUp':
+		        	console.log("ArrowUp");
+					break;
+				case 'Z':
+				case 'z':
+		        	console.log("X");
+		        	gameState=GameState.PLAY;
+					break;
+				case 'X':
+				case 'x':
+		        	console.log("O");
+					break;
+			}
+			break;
+		default: break;
 	}
 }
 
