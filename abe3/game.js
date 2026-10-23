@@ -136,7 +136,34 @@ class PointerHandler {
 		pointer.isDown=true;
 
 		switch(gameState) {
-			case GameState.SELECT: break;
+			case GameState.SELECT:
+
+				if(inrect(pointer.x,pointer.y, 32,256,32,32)) {
+					console.log("up");
+				}
+
+				if(inrect(pointer.x,pointer.y, 64,288,32,32)) {
+					console.log("right");
+				}
+
+				if(inrect(pointer.x,pointer.y, 32,320,32,32)) {
+					console.log("down");
+				}
+
+				if(inrect(pointer.x,pointer.y,  0,288,32,32)) {
+					console.log("left");
+				}
+
+				if(inrect(pointer.x,pointer.y,160,288,32,32)) {
+					console.log("X");
+				}
+
+				if(inrect(pointer.x,pointer.y,224,288,32,32)) {
+					console.log("O");
+				}
+
+
+			break;
 			case GameState.CODE: break;
 			case GameState.PLAY: break;
 		}
@@ -196,10 +223,39 @@ function clrscr(ctx) {
 	ctx.fillRect(0,0,canvas.width,canvas.height);
 }
 
-// Disables right-click context menu on the entire website
-window.addEventListener('contextmenu', (event) => {
-  event.preventDefault();
-});
+function handleDirection(key) {
+	switch(gameState) {
+		case GameState.SELECT:
+		    switch (key) {
+		        case 'ArrowLeft':
+		        	console.log("ArrowLeft");
+					break;
+		        case 'ArrowRight':
+		        	console.log("ArrowRight");
+					break;
+		        case 'ArrowDown':
+		        	console.log("ArrowDown");
+					break;
+		        case 'ArrowUp':
+		        	console.log("ArrowUp");
+					break;
+				case 'Z':
+				case 'z':
+		        	console.log("X");
+					break;
+				case 'X':
+				case 'x':
+		        	console.log("O");
+					break;
+			}
+			break;
+		case GameState.PLAY: break;
+		case GameState.CODE: break;
+	}
+}
+
+
+
 
 clrscr(ctx);
 
@@ -234,4 +290,23 @@ for(var j=0;j<10;j++) {
 
 drawPad(ctx,pad);
 
+
+
+// Disables right-click context menu on the entire website
+window.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+});
+
+window.addEventListener('keydown', (event) => {
+    // Check if the pressed key is one of the arrow keys
+
+//		console.log(event.key);
+
+    if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'X','x','Z','z'].includes(event.key)) {
+        event.preventDefault();
+        handleDirection(event.key);
+    }
+});
+
+const handler = new PointerHandler(canvas);
 
