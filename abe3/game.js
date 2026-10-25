@@ -174,14 +174,26 @@ function drawCommandMenu(ctx,menu,spr) {
 			drawCanvas(ctx,spr,menu.ox+i*16,menu.oy+j*16,1,menu.d[j][i]);
 		}
 	}
+	for(var j=0;j<menu.d.length;j++) {
+		drawGrid(ctx,menu.d[j].length,1,menu.ox,menu.oy+j*16,16,palette[1]);
+	}
+}
+
+function drawCommandMenuTile(ctx,menu,spr) {
+	drawCanvas(ctx,spr,menu.ox+menu.x*16,menu.oy+menu.y*16,1,menu.d[menu.y][menu.x]);
+	for(var j=0;j<menu.d.length;j++) {
+		drawGrid(ctx,menu.d[j].length,1,menu.ox,menu.oy+j*16,16,palette[1]);
+	}
 }
 
 function drawCommandMenuCursor(ctx,menu,spr) {
+	drawCommandMenuTile(ctx,menu,spr);
 	drawCanvas(ctx,spr,menu.x*16+menu.ox,menu.y*16+menu.oy,1,31);
 }
 
 function eraseCommandMenuCursor(ctx,menu,spr) {
 	drawCanvas(ctx,spr,menu.x*16+menu.ox,menu.y*16+menu.oy,1,32);
+	drawCommandMenuTile(ctx,menu,spr);
 }
 
 var pointer={
@@ -229,26 +241,32 @@ class PointerHandler {
 
 				if(inrect(pointer.x,pointer.y, 32,256,32,32)) {
 					console.log("up");
+					handleDirection("ArrowUp");
 				}
 
 				if(inrect(pointer.x,pointer.y, 64,288,32,32)) {
 					console.log("right");
+					handleDirection("ArrowRight");
 				}
 
 				if(inrect(pointer.x,pointer.y, 32,320,32,32)) {
 					console.log("down");
+					handleDirection("ArrowDown");
 				}
 
 				if(inrect(pointer.x,pointer.y,  0,288,32,32)) {
 					console.log("left");
+					handleDirection("ArrowLeft");
 				}
 
 				if(inrect(pointer.x,pointer.y,160,288,32,32)) {
 					console.log("X");
+					handleDirection("Z");
 				}
 
 				if(inrect(pointer.x,pointer.y,224,288,32,32)) {
 					console.log("O");
+					handleDirection("X");
 				}
 
 
@@ -515,8 +533,8 @@ var commandMenu = {
 	x: 0,
 	y: 0,
 	d: [
-		[9,10,11,12,1,2,3,23,24,25],
-		[13,14,15,16,16,18,19,20,21,22],
+		[ 9,10,11,12, 1, 2, 3,23,24,25,31],
+		[13,14,15,16,16,18,19,20,21,22,33],
 	],
 }
 
