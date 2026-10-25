@@ -12,10 +12,9 @@ html, body {
 }
 
 canvas {
-	/* For modern browsers */
-	image-rendering: pixelated; 
-	/* For Firefox */
-	image-rendering: crisp-edges; 
+  /* Prevent browser anti-aliasing when scaling the canvas via CSS */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges; /* Fallback for some browsers */
 }
 
 .container {
