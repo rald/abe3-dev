@@ -120,16 +120,22 @@ function drawCode(ctx,code,spr,x,y,s) {
 
 	for(var j=0;j<code.h;j++) {
 		for(var i=0;i<code.w;i++) {
-			drawCanvas(ctx,spr,x+i*16+16,y+j*16+16,s,code.d[j][i]);
+			drawIns(ctx,code,spr,i,j);
 		}
 	}
 
 	drawGrid(ctx,code.w+1,code.h+1,x,y,16,palette[1]);
 }
 
+function drawIns(ctx,code,spr,x,y) {
+	var clr = code.d[y][x];
+	drawCanvas(ctx,spr,x*16+16,y*16+16,1,0);
+	drawCanvas(ctx,spr,x*16+16,y*16+16,1,clr);
+}
+
 function drawCodeTile(ctx,code,spr) {
 	drawCanvas(ctx,spr,code.x*16+16,code.y*16+16,1,0);
-	drawCanvas(ctx,spr,code.x*16+16,code.y*16+16,1,code.d[code.y][code.x]);
+	drawIns(ctx,code,spr,code.x,code.y);
 	drawGrid(ctx,code.w+1,code.h+1,0,0,16,palette[1]);
 }
 
@@ -169,6 +175,29 @@ function drawCommandMenuCursor(ctx,menu,spr) {
 function eraseCommandMenuCursor(ctx,menu,spr) {
 	drawCanvas(ctx,spr,menu.x*16+menu.ox,menu.y*16+menu.oy,1,32);
 	drawCommandMenuTile(ctx,menu,spr);
+}
+
+function updateCode(code,menu) {
+	var cmd = menu.d[menu.y][menu.x];
+
+	console.log("cmd",cmd);
+
+/*
+	var clr = code.d[code.y][code.x] & 0x11;
+	var ins = (code.d[code.y][code.x] >> 2) & 0x11111;
+
+
+	switch(cmd) {
+		case  0: clr = 0x00; break;
+		case  1: clr = 0x01; break;
+		case  2: clr = 0x10; break;
+		case  3: clr = 0x11; break;
+	}
+
+	code.d[code.y][code.x] = clr;
+
+	console.log("cmd",cmd,"clr",clr,"ins",ins);
+*/
 }
 
 class PointerHandler {
@@ -281,6 +310,7 @@ class PointerHandler {
 }
 
 function handleDirection(key) {
+
 	switch(gameState) {
 
 		case GameState.SELECT:
@@ -347,6 +377,7 @@ function handleDirection(key) {
 		        	drawCode(ctx,code,sprites,0,0,1);
 		        	drawCodeCursor(ctx,code,sprites);
 		        	drawCommandMenu(ctx,commandMenu,sprites,0,14*16);
+					codeState=CodeState.EDIT;
 		        	gameState=GameState.CODE;
 					break;
 				case 'X':
@@ -392,6 +423,7 @@ function handleDirection(key) {
 				        	clrscr(ctx);
 				        	drawPad(ctx,pad);
 							drawLevel(ctx,level,sprites,0,0,1);
+							codeState=CodeState.EDIT;
 				        	gameState=GameState.PLAY;
 							break;
 						case 'X':
@@ -441,12 +473,11 @@ function handleDirection(key) {
 						case 'X':
 						case 'x':
 				        	console.log("O");
-				        	code.d[code.y][code.x]=commandMenu.d[commandMenu.y][commandMenu.x];
+							updateCode(code,commandMenu);
 				        	eraseCommandMenuCursor(ctx,commandMenu,sprites);
 							drawCodeTile(ctx,code,sprites);
-				        	drawCodeCursor(ctx,code,sprites);
-							codeState=CodeState.EDIT;
-							break;
+							drawCodeCursor(ctx,code,sprites);
+							codeState=CodeState.EDIT; break;
 					}
 					break;
 				default: break;
@@ -530,7 +561,7 @@ var commandMenu = {
 	y: 0,
 	d: [
 		[ 9,10,11,12, 1, 2, 3,23,24,25, 0],
-		[13,14,15,16,16,18,19,20,21,22,33],
+		[13,14,15,16,17,18,19,20,21,22,33],
 	],
 }
 
