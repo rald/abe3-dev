@@ -107,15 +107,18 @@ function drawGrid(ctx,w,h,x,y,s,c) {
 }
 
 function drawCode(ctx,code,spr,x,y,s) {
-
+/*
 	for(var i=0;i<code.w;i++) {
 		drawCanvas(ctx,spr,x+i*16+16,y,s,26);
 		drawCanvas(ctx,spr,x+i*16+16,y,s,13+i);
 	}
+*/
 
 	for(var i=0;i<code.h;i++) {
-		drawCanvas(ctx,spr,x,y+i*16+16,s,26);
-		drawCanvas(ctx,spr,x,y+i*16+16,s,13+i);
+		drawCanvas(ctx,spr,x,y+i*16,s,26);
+		drawCanvas(ctx,spr,x,y+i*16,s,34);
+		drawCanvas(ctx,spr,x+16,y+i*16,s,26);
+		drawCanvas(ctx,spr,x+16,y+i*16,s,13+i);
 	}
 
 	for(var j=0;j<code.h;j++) {
@@ -196,9 +199,9 @@ function drawIns(ctx,code,spr,x,y) {
     case 0b10001: cmd=22; break;
   }
 
-	drawCanvas(ctx,spr,x*16+16,y*16+16,1,0);
-	drawCanvas(ctx,spr,x*16+16,y*16+16,1,clr);
-	drawCanvas(ctx,spr,x*16+16,y*16+16,1,cmd);
+	drawCanvas(ctx,spr,x*16+16+16,y*16,1,0);
+	drawCanvas(ctx,spr,x*16+16+16,y*16,1,clr);
+	drawCanvas(ctx,spr,x*16+16+16,y*16,1,cmd);
 }
 
 function updateCode(code,menu) {
