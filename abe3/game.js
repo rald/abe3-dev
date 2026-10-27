@@ -169,24 +169,45 @@ function drawText(ctx,fnt,txt,x,y,s) {
 	}
 }
 
+function loadLevel(lvl) {
+	var hex="01234567";
+	var level={};
+	level.w=lvl.w;
+	level.h=lvl.h;
+	level.x=lvl.x;
+	level.y=lvl.y;
+	level.f=lvl.f;
+	level.d=[];
+	for(var j=0;j<lvl.h;j++) {
+		level.d.push([]);
+		for(var i=0;i<lvl.w;i++) {
+			var k=lvl.d[j][i];
+			var c=hex.indexOf(k);
+			if(c==-1) {
+				level.d[j].push(0);
+			} else {
+				level.d[j].push(c);
+			}
+		}
+	}
+	return level;
+}
+
 function drawLevel(ctx,lvl,spr) {
-	var hex="0123456789ABCDEF";
 	lvl.stars=0;
 	for(var j=0;j<lvl.h;j++) {
 		for(var i=0;i<lvl.w;i++) {
 			var k=lvl.d[j][i];
-			var c=hex.indexOf(k);
-			if(c!=-1) {
-		        var color=c & 3;
-		        var star=c & 4;
-				drawCanvas(ctx,spr,i*16,j*16,1,color);
-				if(star) {
-				  drawCanvas(ctx,spr,i*16,j*16,1,4);
-				  lvl.stars++;
-				}
+	        var clr=k & 3;
+	        var str=k & 4;
+			drawCanvas(ctx,spr,i*16,j*16,1,clr);
+			if(str) {
+			  drawCanvas(ctx,spr,i*16,j*16,1,4);
+			  lvl.stars++;
 			}
 		}
 	}
+
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,lvl.f+5);
 	drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
 
@@ -409,13 +430,13 @@ function showHelp(ctx,font) {
 }
 
 function eraseLevelTile(ctx,lvl,spr) {
-	var clr=lvl.d[lvl.y][lvl.x] & 0b11;
+	var clr = lvl.d[lvl.y][lvl.x] & 0b11;
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,0);
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,clr);
 }
 
 function drawLevelTile(ctx,lvl,spr) {
-	var clr=lvl.d[lvl.y][lvl.x] & 0b11;
+	var clr = lvl.d[lvl.y][lvl.x] & 0b011;
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,0);
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,clr);
 	drawCanvas(ctx,spr,lvl.x*16,lvl.y*16,1,lvl.f+5);
@@ -425,6 +446,7 @@ function pickStar(ctx,lvl) {
 	var str = (lvl.d[lvl.y][lvl.x] >> 2) & 0b1;
 	if(str == 0) return;
 	lvl.d[lvl.y][lvl.x] &= 0b11;
+	lvl.stars--;
 }
 
 function runCode(ctx,code,lvl,spr) {
@@ -432,62 +454,84 @@ function runCode(ctx,code,lvl,spr) {
 	var clr = cmd & 0b11;
 	var ins = (cmd>>2) & 0b11111;
 
-	switch(ins) {
-		case 0b00001:
-			switch(lvl.f) {
-				case 0:
-					eraseLevelTile(ctx,lvl,spr);
-					lvl.y--;
-					pickStar(ctx,lvl);
-					drawLevelTile(ctx,lvl,spr);
-					drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
-					if(code.ip<9) code.ip++;
-					break;
-				case 1:
-					eraseLevelTile(ctx,lvl,spr);
-					lvl.x++;
-					pickStar(ctx,lvl);
-					drawLevelTile(ctx,lvl,spr);
-					drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
-					if(code.ip<9) code.ip++;
-					break;
-				case 2:
-					eraseLevelTile(ctx,lvl,spr);
-					lvl.y++;
-					pickStar(ctx,lvl);
-					drawLevelTile(ctx,lvl,spr);
-					drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
-					if(code.ip<9) code.ip++;
-					break;
-				case 3:
-					eraseLevelTile(ctx,lvl,spr);
-					lvl.x--;
-					pickStar(ctx,lvl);
-					drawLevelTile(ctx,lvl,spr);
-					drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
-					if(code.ip<9) code.ip++;
-					break;
-				default: break;
-			}
-			break;
-		case 0b00010:
-			eraseLevelTile(ctx,lvl,spr);
-			lvl.f++;
-			if(lvl.f>3) lvl.f=0;
-			drawLevelTile(ctx,lvl,spr);
-			drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
-			if(code.ip<9) code.ip++;
-			break;
-		case 0b00011:
-			eraseLevelTile(ctx,lvl,spr);
-			lvl.f--;
-			if(lvl.f<0) lvl.f=3;
-			drawLevelTile(ctx,lvl,spr);
-			drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
-			if(code.ip<9) code.ip++;
-			break;
-		default: break;
+	var lclr = lvl.d[lvl.y][lvl.x] & 0b11;
+	var lstr = (lvl.d[lvl.y][lvl.x]>>2) & 0b1;
+
+	if(clr==0 || clr==lclr) {
+		switch(ins) {
+			case 0b00001:
+				switch(lvl.f) {
+					case 0:
+						eraseLevelTile(ctx,lvl,spr);
+						lvl.y--;
+						pickStar(ctx,lvl);
+						drawLevelTile(ctx,lvl,spr);
+						drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+						break;
+					case 1:
+						eraseLevelTile(ctx,lvl,spr);
+						lvl.x++;
+						pickStar(ctx,lvl);
+						drawLevelTile(ctx,lvl,spr);
+						drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+						break;
+					case 2:
+						eraseLevelTile(ctx,lvl,spr);
+						lvl.y++;
+						pickStar(ctx,lvl);
+						drawLevelTile(ctx,lvl,spr);
+						drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+						break;
+					case 3:
+						eraseLevelTile(ctx,lvl,spr);
+						lvl.x--;
+						pickStar(ctx,lvl);
+						drawLevelTile(ctx,lvl,spr);
+						drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+						break;
+					default: break;
+				}
+				break;
+			case 0b00010:
+				eraseLevelTile(ctx,lvl,spr);
+				lvl.f++;
+				if(lvl.f>3) lvl.f=0;
+				drawLevelTile(ctx,lvl,spr);
+				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+				break;
+			case 0b00011:
+				eraseLevelTile(ctx,lvl,spr);
+				lvl.f--;
+				if(lvl.f<0) lvl.f=3;
+				drawLevelTile(ctx,lvl,spr);
+				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+				break;
+			case 0b00100:
+				break;
+			case 0b00101:
+				console.log("paint red");
+				lvl.d[lvl.y][lvl.x]=1;
+				drawLevelTile(ctx,lvl,spr);
+				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+				break;
+			case 0b00110:
+				console.log("paint green");
+				lvl.d[lvl.y][lvl.x]=2;
+				drawLevelTile(ctx,lvl,spr);
+				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+				break;
+			case 0b00111:
+				console.log("paint blue");
+				lvl.d[lvl.y][lvl.x]=3;
+				drawLevelTile(ctx,lvl,spr);
+				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
+				break;
+			default: break;
+		}
 	}
+
+	if(code.ip<9) code.ip++;
+
 }
 
 function handleDirection(key) {
@@ -500,7 +544,7 @@ function handleDirection(key) {
 		        case 'ArrowLeft':
 		        	if(currentLevel>0) {
 		        		currentLevel--;
-		        		level={...levels[currentLevel]};
+		        		level=loadLevel(levels[currentLevel]);
 		        		clrscr(ctx);
 						drawLevel(ctx,level,sprites);
 						showHelp(ctx,font);
@@ -510,7 +554,7 @@ function handleDirection(key) {
 		        case 'ArrowRight':
 		        	if(currentLevel<levels.length-1) {
 		        		currentLevel++;
-		        		level={...levels[currentLevel]};
+		        		level=loadLevel(levels[currentLevel]);
 		        		clrscr(ctx);
 						drawLevel(ctx,level,sprites);
   						showHelp(ctx,font);
@@ -526,8 +570,8 @@ function handleDirection(key) {
 		        	gameState=GameState.PLAY;
 				    clrscr(ctx);
 					drawLevel(ctx,level,sprites);
-					drawPad(ctx,pad);
 					showHelp(ctx,font);
+					drawPad(ctx,pad);
 					break;
 				case 'X':
 				case 'x':
@@ -551,11 +595,11 @@ function handleDirection(key) {
 		    		codeState=CodeState.EDIT;
 		        	gameState=GameState.CODE;
 		        	clrscr(ctx);
-		        	drawPad(ctx,pad);
 		        	drawCode(ctx,code,sprites,0,0,1);
 		        	drawCodeCursor(ctx,code,sprites);
 		        	drawCommandMenu(ctx,commandMenu,sprites,0,14*16);
 		        	showHelp(ctx,font);
+		        	drawPad(ctx,pad);
 					break;
 				case 'X':
 				case 'x':
@@ -596,8 +640,8 @@ function handleDirection(key) {
 							gameState=GameState.PLAY;
 							clrscr(ctx);
 							drawLevel(ctx,level,sprites);
-							drawPad(ctx,pad);
 							showHelp(ctx,font);
+							drawPad(ctx,pad);
 							break;
 						case 'X':
 						case 'x':
@@ -751,9 +795,8 @@ var commandMenu = {
 }
 
 var currentLevel=0;
-var level={...levels[currentLevel]};
+var level=loadLevel(levels[currentLevel]);
 clrscr(ctx);
 drawLevel(ctx,level,sprites);
 showHelp(ctx,font);
 drawPad(ctx,pad);
-drawGrid(ctx);
