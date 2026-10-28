@@ -508,9 +508,11 @@ function pickStar(ctx,lvl,font) {
 	hideLevelInfo(ctx,lvl,font);
 	showLevelInfo(ctx,lvl,font);
 	if(lvl.stars==0) {
-	  gameState=GameState.COMPLETE;
-	  hideHelp(ctx);
-	  showHelp(ctx,font);
+		gameState=GameState.COMPLETE;
+		hideLevelInfo(ctx);
+		hideHelp(ctx);
+		showLevelInfo(ctx,level,font);
+		showHelp(ctx,font);
 	}
 }
 
@@ -645,18 +647,22 @@ function runCode(ctx,code,lvl,spr) {
 		}
 	}
 
-	if(code.ip<9) { 
-	  code.ip++; 
-	} else {
-	  if(callStack.length()>0) {
-	    var loc=callStack.pop();
-	    code.fn=loc.fn;
-	    code.ip=loc.ip;
-	  } else {
-	    gameState=GameState.END;
-	    hideHelp(ctx);
-	    showHelp(ctx,font);
-	  }
+	var ins=(code.d[code.fn][code.ip]>>2) & 0b11111;
+	while(code.ip<9 && ins==0b00000) {
+		code.ip++;
+		ins=(code.d[code.fn][code.ip]>>2) & 0b11111;
+	}
+
+	if(code.ip>=9) {
+		if(callStack.length>0) {
+		    var loc=callStack.pop();
+		    code.fn=loc.fn;
+		    code.ip=loc.ip;
+	  	} else {
+			gameState=GameState.END;
+			hideHelp(ctx);
+			showHelp(ctx,font);
+		}
 	}
 
 }
@@ -845,29 +851,47 @@ function handleDirection(key) {
 					break;
 				default: break;
 			}
-
 			break;
 		case GameState.END:
-      switch(key) {
-        case 'Z':
-        case 'z':
-          break;
-		    case 'X':
-		    case 'x':
-		    break;
-        default: break;
-      }
+			switch(key) {
+				case 'Z':
+				case 'z':
+		        	gameState=GameState.CODE;
+		    		codeState=CodeState.EDIT;
+		        	clrscr(ctx);
+		        	drawCode(ctx,code,sprites,0,0,1);
+		        	drawCodeCursor(ctx,code,sprites);
+		        	drawCommandMenu(ctx,commandMenu,sprites,0,14*16);
+		        	showHelp(ctx,font);
+		        	drawPad(ctx,pad);
+					break;
+				case 'X':
+				case 'x':
+				    break;
+				default: break;
+			}
 		  break;
 		case GameState.COMPLETE:
-		  switch(key) {
-		    case 'Z':
-		    case 'z':
-		    break;
-		    case 'X':
-		    case 'x':
-		    break;
-        default: break;
-		  }
+			switch(key) {
+				case 'Z':
+				case 'z':
+					gameState=GameState.SELECT;
+					codeState=CodeState.EDIT;
+					clrscr(ctx);
+					level=loadLevel(levels[currentLevel]);
+					code = initCode();
+					commandMenu = initCommandMenu();
+					callStack = [];
+					drawLevel(ctx,level,sprites);
+					showLevelInfo(ctx,level,font);
+					showHelp(ctx,font);
+					drawPad(ctx,pad);
+					break;
+				case 'X':
+				case 'x':
+					break;
+	        	default: break;
+		  	}
 		default: break;
 	}
 }
@@ -916,10 +940,10 @@ var pointer = {
 	isDown:false
 };
 
+const handler = new PointerHandler(canvas);
+
 var gameState = GameState.SELECT;
 var codeState = CodeState.EDIT;
-
-const handler = new PointerHandler(canvas);
 
 var code = initCode();
 var commandMenu = initCommandMenu();
@@ -927,6 +951,7 @@ var callStack = [];
 
 var currentLevel=0;
 var level=loadLevel(levels[currentLevel]);
+
 clrscr(ctx);
 drawLevel(ctx,level,sprites);
 showLevelInfo(ctx,level,font);
