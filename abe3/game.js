@@ -563,7 +563,7 @@ function showFn(ctx,code,spr) {
 	}
 
 	drawGrid(ctx,code.w,1,code.fx+16+16,code.fy,16,palette[1]);
-	drawCanvas(ctx,spr,code.fx+code.ip*16+16+16,code.fy,1,31);
+	if(code.ip<=9) drawCanvas(ctx,spr,code.fx+code.ip*16+16+16,code.fy,1,31);
 }
 
 function runCode(ctx,code,lvl,spr) {
@@ -624,7 +624,16 @@ function runCode(ctx,code,lvl,spr) {
 				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
 				break;
 			case 0b00100:
-				break;
+    		if(callStack.length>0) {
+    		    var loc=callStack.pop();
+    		    code.fn=loc.fn;
+    		    code.ip=loc.ip;
+    	  	} else {
+    			gameState=GameState.END;
+    			hideHelp(ctx);
+    			showHelp(ctx,font);
+    		}
+				return;
 			case 0b00101:
 				lvl.d[lvl.y][lvl.x]=1;
 				drawLevelTile(ctx,lvl,spr);
@@ -641,52 +650,52 @@ function runCode(ctx,code,lvl,spr) {
 				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
 				break;
 			case 0b01000:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=0;
 			  code.ip=0;
 			  return;
 			case 0b01001:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=1;
 			  code.ip=0;
 			  return;
 			case 0b01010:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=2;
 			  code.ip=0;
 			  return;
 			case 0b01011:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=3;
 			  code.ip=0;
 			  return;
 			case 0b01100:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=4;
 			  code.ip=0;
 			  return;
 			case 0b01101:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=5;
 			  code.ip=0;
 			  return;
 			case 0b01110:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=6;
 			  code.ip=0;
 			  return;
 			case 0b01111:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=7;
 			  code.ip=0;
 			  return;
 			case 0b10000:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=8;
 			  code.ip=0;
 			  return;
 			case 0b10001:
-			  callStack.push({fn:code.fn, ip:code.ip});
+			  if(code.ip<9) callStack.push({fn:code.fn, ip:code.ip+1});
 			  code.fn=9;
 			  code.ip=0;
 			  return;
@@ -694,9 +703,9 @@ function runCode(ctx,code,lvl,spr) {
 		}
 	}
 
-	if(code.ip<9) {
-		code.ip++;
-	} else {
+  code.ip++;
+
+	if(code.ip>9) {
 		if(callStack.length>0) {
 		    var loc=callStack.pop();
 		    code.fn=loc.fn;
@@ -707,6 +716,7 @@ function runCode(ctx,code,lvl,spr) {
 			showHelp(ctx,font);
 		}
 	}
+
 }
 
 function handleDirection(key) {
