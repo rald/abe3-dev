@@ -694,6 +694,8 @@ function handleDirection(key) {
 							gameState=GameState.PLAY;
 							clrscr(ctx);
 				        	level=loadLevel(levels[currentLevel]);
+				        	code.fn=0;
+				        	code.ip=0;
 							drawLevel(ctx,level,sprites);
 							showLevelInfo(ctx,level,font);
 							showHelp(ctx,font);
@@ -745,6 +747,8 @@ function handleDirection(key) {
 				        	gameState=GameState.PLAY;
 				        	clrscr(ctx);
 				        	level=loadLevel(levels[currentLevel]);
+				        	code.fn=0;
+				        	code.ip=0;
 							drawLevel(ctx,level,sprites);
 							showLevelInfo(ctx,level,font);
 							showHelp(ctx,font);
