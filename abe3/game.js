@@ -466,15 +466,24 @@ function showHelp(ctx,font) {
     case GameState.CODE:
       switch(codeState) {
         case CodeState.EDIT:
-      drawText(ctx,font,"MENU [O] PLAY [X]",3,15*16,1);
+      drawText(ctx,font,"PLAY [X] MENU [O]",3,15*16,1);
       drawText(ctx,font,"MOVE ARROWS",3,15*16+8,1);
         break;
         case CodeState.MENU:
-      drawText(ctx,font,"CODE [O] PLAY [X]",3,15*16,1);
+      drawText(ctx,font,"PLAY [X] CODE [O]",3,15*16,1);
       drawText(ctx,font,"MOVE ARROWS",3,15*16+8,1);
         break;
       }
       break;
+    case GameState.END:
+      drawText(ctx,font,"CODE [X]",3,15*16,1);
+      drawText(ctx,font,"END PROGRAM",3,15*16+8,1);
+        break;
+    case GameState.COMPLETE:
+      drawText(ctx,font,"SELECT [X]",3,15*16,1);
+      drawText(ctx,font,"COMPLETE",3,15*16+8,1);
+      break;
+    default: break;
   }
 }
 
@@ -498,6 +507,11 @@ function pickStar(ctx,lvl,font) {
 	lvl.stars--;
 	hideLevelInfo(ctx,lvl,font);
 	showLevelInfo(ctx,lvl,font);
+	if(lvl.stars==0) {
+	  gameState=GameState.COMPLETE;
+	  hideHelp(ctx);
+	  showHelp(ctx,font);
+	}
 }
 
 function runCode(ctx,code,lvl,spr) {
@@ -577,11 +591,73 @@ function runCode(ctx,code,lvl,spr) {
 				drawLevelTile(ctx,lvl,spr);
 				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
 				break;
+			case 0b01000:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=0;
+			  code.ip=0;
+			  return;
+			case 0b01001:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=1;
+			  code.ip=0;
+			  return;
+			case 0b01010:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=2;
+			  code.ip=0;
+			  return;
+			case 0b01011:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=3;
+			  code.ip=0;
+			  return;
+			case 0b01100:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=4;
+			  code.ip=0;
+			  return;
+			case 0b01101:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=5;
+			  code.ip=0;
+			  return;
+			case 0b01110:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=6;
+			  code.ip=0;
+			  return;
+			case 0b01111:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=7;
+			  code.ip=0;
+			  return;
+			case 0b10000:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=8;
+			  code.ip=0;
+			  return;
+			case 0b10001:
+			  callStack.push({fn:code.fn, ip:code.ip});
+			  code.fn=9;
+			  code.ip=0;
+			  return;
 			default: break;
 		}
 	}
 
-	if(code.ip<9) code.ip++;
+	if(code.ip<9) { 
+	  code.ip++; 
+	} else {
+	  if(callStack.length()>0) {
+	    var loc=callStack.pop();
+	    code.fn=loc.fn;
+	    code.ip=loc.ip;
+	  } else {
+	    gameState=GameState.END;
+	    hideHelp(ctx);
+	    showHelp(ctx,font);
+	  }
+	}
 
 }
 
@@ -771,6 +847,27 @@ function handleDirection(key) {
 			}
 
 			break;
+		case GameState.END:
+      switch(key) {
+        case 'Z':
+        case 'z':
+          break;
+		    case 'X':
+		    case 'x':
+		    break;
+        default: break;
+      }
+		  break;
+		case GameState.COMPLETE:
+		  switch(key) {
+		    case 'Z':
+		    case 'z':
+		    break;
+		    case 'X':
+		    case 'x':
+		    break;
+        default: break;
+		  }
 		default: break;
 	}
 }
@@ -804,6 +901,8 @@ const GameState = {
 	SELECT: "SELECT",
 	PLAY:   "PLAY",
 	CODE:   "CODE",
+	END:    "END",
+	COMPLETE: "COMPLETE",
 };
 
 const CodeState = {
@@ -824,6 +923,7 @@ const handler = new PointerHandler(canvas);
 
 var code = initCode();
 var commandMenu = initCommandMenu();
+var callStack = [];
 
 var currentLevel=0;
 var level=loadLevel(levels[currentLevel]);
