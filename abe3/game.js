@@ -693,6 +693,7 @@ function handleDirection(key) {
 							codeState=CodeState.EDIT;
 							gameState=GameState.PLAY;
 							clrscr(ctx);
+				        	level=loadLevel(levels[currentLevel]);
 							drawLevel(ctx,level,sprites);
 							showLevelInfo(ctx,level,font);
 							showHelp(ctx,font);
