@@ -594,12 +594,14 @@ function runCode(ctx,code,lvl,spr) {
 						break;
 					default: break;
 				}
+
 				if(lvl.x<0 || lvl.y<0 || lvl.x>lvl.w-1 || lvl.y>lvl.h-1 || ((lvl.d[lvl.y][lvl.x] & 0b11) == 0b00)) {
-          gameState=GameState.END;
-				  hideHelp(ctx);
-          showHelp(ctx,font);
-				  return;
+	          		gameState=GameState.END;
+					hideHelp(ctx);
+	          		showHelp(ctx,font);
+					return;
 				}
+
 				pickStar(ctx,lvl,font);
 				drawLevelTile(ctx,lvl,spr);
 				drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
