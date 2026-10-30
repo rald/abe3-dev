@@ -235,7 +235,7 @@ function drawPad(ctx,pad) {
 	drawCanvas(ctx,pad,192,320,2,7);
 */
 
-	drawBorder(ctx);
+//	drawBorder(ctx);
 
 	drawText(ctx,font,"ABE'S STAR WORLD",(canvas.width-16*12)/2,canvas.height-14,2);
 }
@@ -308,6 +308,7 @@ function drawLevel(ctx,lvl,spr,font) {
 	drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
 }
 
+/*
 function drawBorder(ctx) {
 	ctx.strokeStyle=palette[12];
 	ctx.strokeRect(0.5,0.5,256,256);
@@ -316,7 +317,7 @@ function drawBorder(ctx) {
 	ctx.strokeRect(0,0,canvas.width,canvas.height);
 	ctx.strokeRect(0,0,canvas.width,256);
 }
-
+*/
 
 /*
 function drawGrid(ctx,w,h,x,y,s,c) {
