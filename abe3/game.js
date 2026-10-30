@@ -317,6 +317,8 @@ function drawBorder(ctx) {
 	ctx.strokeRect(0,0,canvas.width,256);
 }
 
+
+/*
 function drawGrid(ctx,w,h,x,y,s,c) {
 	for(var i=0;i<=w;i++) {
 		ctx.beginPath();
@@ -335,6 +337,31 @@ function drawGrid(ctx,w,h,x,y,s,c) {
 		ctx.closePath();
 	}
 }
+*/
+
+function drawGrid(ctx,w,h,x,y,s,c) {
+	ctx.beginPath();
+	ctx.strokeStyle = c;
+	ctx.lineWidth = 1;
+
+	// Draw vertical grid lines
+	for(var i = 0; i <= w; i++) {
+		var px = Math.floor(x + i * s) + 0.5;
+		ctx.moveTo(px, Math.floor(y) + 0.5);
+		ctx.lineTo(px, Math.floor(y + h * s) + 0.5);
+	}
+
+	// Draw horizontal grid lines
+	for(var j = 0; j <= h; j++) {
+		var py = Math.floor(y + j * s) + 0.5;
+		ctx.moveTo(Math.floor(x) + 0.5, py);
+		ctx.lineTo(Math.floor(x + w * s) + 0.5, py);
+	}
+
+	ctx.stroke();
+	ctx.closePath();
+}
+
 
 function drawCode(ctx,code,spr,x,y,s) {
 
