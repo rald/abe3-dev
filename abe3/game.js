@@ -308,38 +308,6 @@ function drawLevel(ctx,lvl,spr,font) {
 	drawGrid(ctx,lvl.w,lvl.h,0,0,16,palette[1]);
 }
 
-/*
-function drawBorder(ctx) {
-	ctx.strokeStyle=palette[12];
-	ctx.strokeRect(0.5,0.5,256,256);
-
-	ctx.strokeStyle=palette[12];
-	ctx.strokeRect(0,0,canvas.width,canvas.height);
-	ctx.strokeRect(0,0,canvas.width,256);
-}
-*/
-
-/*
-function drawGrid(ctx,w,h,x,y,s,c) {
-	for(var i=0;i<=w;i++) {
-		ctx.beginPath();
-		ctx.strokeStyle=c;
-		ctx.moveTo(x+i*s,y);
-		ctx.lineTo(x+i*s,y+h*s);
-		ctx.stroke();
-		ctx.closePath();
-	}
-	for(var i=0;i<=h;i++) {
-		ctx.beginPath();
-		ctx.strokeStyle=c;
-		ctx.moveTo(x,y+i*s);
-		ctx.lineTo(x+w*s,y+i*s);
-		ctx.stroke();
-		ctx.closePath();
-	}
-}
-*/
-
 function drawGrid(ctx,w,h,x,y,s,c) {
 	ctx.beginPath();
 	ctx.strokeStyle = c;
@@ -1041,7 +1009,6 @@ var ctx = canvas.getContext("2d");
 
 canvas.width = 256;
 canvas.height = 256+128;
-canvas.style.border = "1px solid white";
 
 // Disable smoothing inside the canvas context (for drawImage)
 ctx.imageSmoothingEnabled = false;
